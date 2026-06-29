@@ -13,7 +13,7 @@ test("GET Request Using ApiHelper", async({request})=>{
 
     //Use reusable GET method
 
-    const response= await api.get('https://jsonplaceholder.typicode.com/users/1');
+    const response= await api.get('/users/1');
 
     //Verify status code
 

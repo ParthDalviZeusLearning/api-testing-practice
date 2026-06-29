@@ -1,60 +1,53 @@
-import { test , expect } from "@playwright/test";
+import { test, expect } from "@playwright/test";
 
-test("Login API and Get User profile Using Profile Token", async({request})=>{
+test("Login API and Get User profile Using Profile Token", async ({
+  request,
+}) => {
+  const loginData = {
+    username: "emilys",
+    password: "emilyspass",
+  };
 
+  const loginResponse = await request.post("https://dummyjson.com/auth/login", {
+    headers: {
+      "Content-Type": "application/json",
+    },
+    data: loginData,
+  });
 
-    const loginData = {
+  console.log("Login Status Code", loginResponse.status());
 
-        username: "emilys",
-        password: "emilyspass"
-    };
+  expect(loginResponse.status()).toBe(200);
 
-   const loginResponse = await request.post('https://dummyjson.com/auth/login', {
-                
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                data: loginData
-   });
+  const loginBody = await loginResponse.json();
 
+  console.log("\n===============LOGIN RESPONSE================");
 
-   console.log("Login Status Code", loginResponse.status());
+  console.log(loginBody);
 
-   expect(loginResponse.status()).toBe(200);
+  const accessToken = loginBody.accessToken;
 
-   const loginBody = await loginResponse.json();
+  expect(accessToken).toBeTruthy();
 
-   console.log("\n===============LOGIN RESPONSE================");
+  console.log("\nAccess Token", accessToken);
 
-   console.log(loginBody);
+  // Call Profile API
 
-   const accessToken = loginBody.accessToken ;
+  const profileResponse = await request.get("https://dummyjson.com/auth/me", {
+    headers: {
+      Authorization: `Bearer ${accessToken}`,
+    },
+  });
 
-   expect(accessToken).toBeTruthy();
+  // Print Profile Status Code
 
-   console.log("\nAccess Token", accessToken);
+  console.log("\nProfile Status Code:", profileResponse.status());
 
-   // Call Profile API
+  expect(profileResponse.status()).toBe(200);
 
-   const profileResponse = await request.get('https://dummyjson.com/auth/me',{
+  const profileBody = await profileResponse.json();
 
-                   headers: {
-                     
-                    Authorization: `Bearer ${accessToken}`
-                   }
-   });
+  console.log("\n========PROFILE BODY==========");
 
-
-   // Print Profile Status Code
-
-   console.log("\nProfile Status Code:",profileResponse.status());
-
-   expect(profileResponse.status()).toBe(200);
-
-   const profileBody = await profileResponse.json();
-
-   console.log("\n========PROFILE BODY==========");
-
-   console.log(profileBody);
-
-})
+  console.log(profileBody);
+});

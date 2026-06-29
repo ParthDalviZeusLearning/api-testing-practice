@@ -8,13 +8,12 @@ test("POST Request using ApiHelper", async ({ request }) => {
   // Request body
   const userData = {
     name: "Parth",
-
     job: "QA Engineer",
   };
 
   // Send POST request
   const response = await api.post(
-    "https://jsonplaceholder.typicode.com/users",
+    "/users",
     userData,
   );
 
